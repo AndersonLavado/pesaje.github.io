@@ -1,0 +1,428 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CELSA - Registro de Pesaje</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --celsa-red: #E30613;
+            --celsa-dark: #1A1A1A;
+            --celsa-light-gray: #F5F5F7;
+            --celsa-border: #D1D1D6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--celsa-light-gray);
+            color: var(--celsa-dark);
+            display: flex;
+            justify-content: center;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        header {
+            border-top: 4px solid var(--celsa-red);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--celsa-border);
+        }
+
+        .logo-box {
+            background-color: var(--celsa-red);
+            color: #FFFFFF;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 3px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .logo-sub {
+            font-size: 8px;
+            font-weight: bold;
+            color: #000000;
+            text-transform: uppercase;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .app-title {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        main {
+            padding: 20px;
+            flex: 1;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--celsa-red);
+            padding-left: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #444;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: #8E8E93;
+            font-size: 16px;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 12px 12px 12px 38px;
+            font-size: 15px;
+            border: 1px solid var(--celsa-border);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--celsa-red);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Sección de Múltiples Fotos */
+        .photo-btn-trigger {
+            background-color: var(--celsa-light-gray);
+            border: 2px dashed var(--celsa-border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .photo-btn-trigger:active {
+            background-color: #ECECED;
+        }
+
+        .photo-btn-trigger i {
+            font-size: 24px;
+            color: var(--celsa-red);
+            margin-bottom: 6px;
+        }
+
+        .photo-btn-trigger p {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .preview-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .preview-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* Cuadrado 1:1 */
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--celsa-border);
+        }
+
+        .preview-container img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-photo-btn {
+            position: absolute;
+            top: 2px; right: 2px;
+            background: rgba(223, 6, 19, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Botones de acción e indicadores de carga */
+        .btn-submit {
+            width: 100%;
+            background-color: var(--celsa-red);
+            color: #FFFFFF;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(227, 6, 19, 0.2);
+        }
+
+        .btn-submit:disabled {
+            background-color: #999;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .loading-overlay {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: var(--celsa-red);
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-container">
+    <header>
+        <div>
+            <div class="logo-box">CELSA</div>
+            <div class="logo-sub">Conductores Eléctricos</div>
+        </div>
+        <div class="app-title">Entrega de bloques de cobre</div>
+    </header>
+
+    <main>
+        <h2>Nuevo Registro</h2>
+        
+        <form id="pesajeForm">
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-calendar"></i>
+                    <input type="date" id="fecha" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="boleta">N° Boleta</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-ticket"></i>
+                    <input type="text" id="boleta" placeholder="Ej. 9778" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="p_bruto">P. Bruto (kg)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-weight-scale"></i>
+                        <input type="number" step="0.1" id="p_bruto" placeholder="0.0" oninput="calcularNeto()" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tara">Tara (kg)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-box"></i>
+                        <input type="number" step="0.1" id="tara" placeholder="0.0" oninput="calcularNeto()" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="p_neto">P. Neto (kg)</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calculator"></i>
+                    <input type="number" id="p_neto" placeholder="Cálculo automático" readonly style="background-color: #F2F2F7; font-weight: 600;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Evidencias Fotográficas (Múltiples)</label>
+                <div class="photo-btn-trigger" onclick="document.getElementById('cameraFile').click();">
+                    <i class="fa-solid fa-camera"></i>
+                    <p>Capturar o añadir fotografía</p>
+                </div>
+                <input type="file" id="cameraFile" accept="image/*" style="display: none;" onchange="procesarFoto(this)">
+                
+                <div class="preview-gallery" id="gallery"></div>
+            </div>
+
+            <div class="loading-overlay" id="loadingText">
+                <i class="fa-solid fa-spinner fa-spin"></i> Subiendo datos y fotos a Google Drive...
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Registrar en Drive
+            </button>
+        </form>
+    </main>
+</div>
+
+<script>
+    // URL generada al publicar tu Google Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby4vjZQVVeq4yt0OCRD-8D41qh_6HcGW41m6YpXCPqFqpgPOAV3Bpm8x1fOpHUIRyhq/exec";
+
+    document.getElementById('fecha').valueAsDate = new Date();
+    let listaFotosBase64 = []; // Array para guardar las múltiples imágenes en memoria
+
+    function calcularNeto() {
+        const bruto = parseFloat(document.getElementById('p_bruto').value) || 0;
+        const tara = parseFloat(document.getElementById('tara').value) || 0;
+        const neto = bruto - tara;
+        document.getElementById('p_neto').value = neto > 0 ? neto.toFixed(1) : 0;
+    }
+
+    // Procesa cada imagen capturada, la convierte a base64 y la añade a la galería visual
+    function procesarFoto(input) {
+        if (input.files && input.files[0]) {
+            const archivo = input.files[0];
+            const lector = new FileReader();
+            
+            lector.onload = function(e) {
+                const base64Data = e.target.result;
+                
+                // Guardar en el arreglo global
+                listaFotosBase64.push({
+                    base64: base64Data,
+                    filename: archivo.name
+                });
+                
+                // Renderizar miniatura en la interfaz móvil
+                renderizarGaleria();
+            };
+            lector.readAsDataURL(archivo);
+            input.value = ""; // Limpiar input para permitir capturar la misma foto consecutivamente
+        }
+    }
+
+    function renderizarGaleria() {
+        const galeria = document.getElementById('gallery');
+        galeria.innerHTML = ""; // Limpiar vista previa anterior
+        
+        listaFotosBase64.forEach((foto, indice) => {
+            const contenedor = document.createElement('div');
+            contenedor.className = "preview-container";
+            
+            const img = document.createElement('img');
+            img.src = foto.base64;
+            
+            const btnEliminar = document.createElement('button');
+            btnEliminar.className = "remove-photo-btn";
+            btnEliminar.innerHTML = "×";
+            btnEliminar.type = "button";
+            btnEliminar.onclick = function() {
+                listaFotosBase64.splice(indice, 1); // Quitar del arreglo
+                renderizarGaleria(); // Re-dibujar
+            };
+            
+            contenedor.appendChild(img);
+            contenedor.appendChild(btnEliminar);
+            galeria.appendChild(contenedor);
+        });
+    }
+
+    // Envío asíncrono vía POST al endpoint de Google Sheets/Drive
+    document.getElementById('pesajeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if(WEB_APP_URL === "https://script.google.com/macros/s/AKfycby4vjZQVVeq4yt0OCRD-8D41qh_6HcGW41m6YpXCPqFqpgPOAV3Bpm8x1fOpHUIRyhq/exec") {
+            alert("Error: Debes configurar primero la URL de tu Apps Script en el código.");
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingText = document.getElementById('loadingText');
+        
+        // Bloquear UI durante la transferencia
+        submitBtn.disabled = true;
+        loadingText.style.display = "block";
+
+        // Estructura de carga útil limpia en JSON
+        const payload = {
+            fecha: document.getElementById('fecha').value,
+            boleta: document.getElementById('boleta').value,
+            p_bruto: document.getElementById('p_bruto').value,
+            tara: document.getElementById('tara').value,
+            p_neto: document.getElementById('p_neto').value,
+            fotos: listaFotosBase64 // Pasamos el array completo de imágenes procesadas
+        };
+
+        // Petición HTTP nativa (Fetch API) a la nube de Google
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Evita bloqueos por políticas CORS en entornos móviles locales
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert("¡Registro exitoso! Los datos se guardaron en la hoja y las fotos fueron ordenadas en Drive.");
+            // Resetear el formulario e interfaz de fotos
+            document.getElementById('pesajeForm').reset();
+            document.getElementById('fecha').valueAsDate = new Date();
+            listaFotosBase64 = [];
+            renderizarGaleria();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Hubo un problema al procesar el envío.");
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            loadingText.style.display = "none";
+        });
+    });
+</script>
+
+</body>
+</html>
