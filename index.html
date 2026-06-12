@@ -373,11 +373,6 @@
     // Envío asíncrono vía POST al endpoint de Google Sheets/Drive
     document.getElementById('pesajeForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        if(WEB_APP_URL === "https://script.google.com/macros/s/AKfycby4vjZQVVeq4yt0OCRD-8D41qh_6HcGW41m6YpXCPqFqpgPOAV3Bpm8x1fOpHUIRyhq/exec") {
-            alert("Error: Debes configurar primero la URL de tu Apps Script en el código.");
-            return;
-        }
 
         const submitBtn = document.getElementById('submitBtn');
         const loadingText = document.getElementById('loadingText');
