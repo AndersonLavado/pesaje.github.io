@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -133,7 +134,6 @@
             flex: 1;
         }
 
-        /* Sección de Múltiples Fotos */
         .photo-btn-trigger {
             background-color: var(--celsa-light-gray);
             border: 2px dashed var(--celsa-border);
@@ -170,7 +170,7 @@
         .preview-container {
             position: relative;
             width: 100%;
-            padding-top: 100%; /* Cuadrado 1:1 */
+            padding-top: 100%;
             border-radius: 6px;
             overflow: hidden;
             border: 1px solid var(--celsa-border);
@@ -197,7 +197,6 @@
             justify-content: center;
         }
 
-        /* Botones de acción e indicadores de carga */
         .btn-submit {
             width: 100%;
             background-color: var(--celsa-red);
@@ -308,11 +307,10 @@
 </div>
 
 <script>
-    // URL generada al publicar tu Google Apps Script
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby4vjZQVVeq4yt0OCRD-8D41qh_6HcGW41m6YpXCPqFqpgPOAV3Bpm8x1fOpHUIRyhq/exec";
 
     document.getElementById('fecha').valueAsDate = new Date();
-    let listaFotosBase64 = []; // Array para guardar las múltiples imágenes en memoria
+    let listaFotosBase64 = [];
 
     function calcularNeto() {
         const bruto = parseFloat(document.getElementById('p_bruto').value) || 0;
@@ -321,7 +319,6 @@
         document.getElementById('p_neto').value = neto > 0 ? neto.toFixed(1) : 0;
     }
 
-    // Procesa cada imagen capturada, la convierte a base64 y la añade a la galería visual
     function procesarFoto(input) {
         if (input.files && input.files[0]) {
             const archivo = input.files[0];
@@ -329,24 +326,20 @@
             
             lector.onload = function(e) {
                 const base64Data = e.target.result;
-                
-                // Guardar en el arreglo global
                 listaFotosBase64.push({
                     base64: base64Data,
                     filename: archivo.name
                 });
-                
-                // Renderizar miniatura en la interfaz móvil
                 renderizarGaleria();
             };
             lector.readAsDataURL(archivo);
-            input.value = ""; // Limpiar input para permitir capturar la misma foto consecutivamente
+            input.value = "";
         }
     }
 
     function renderizarGaleria() {
         const galeria = document.getElementById('gallery');
-        galeria.innerHTML = ""; // Limpiar vista previa anterior
+        galeria.innerHTML = "";
         
         listaFotosBase64.forEach((foto, indice) => {
             const contenedor = document.createElement('div');
@@ -360,8 +353,8 @@
             btnEliminar.innerHTML = "×";
             btnEliminar.type = "button";
             btnEliminar.onclick = function() {
-                listaFotosBase64.splice(indice, 1); // Quitar del arreglo
-                renderizarGaleria(); // Re-dibujar
+                listaFotosBase64.splice(indice, 1);
+                renderizarGaleria();
             };
             
             contenedor.appendChild(img);
@@ -370,31 +363,27 @@
         });
     }
 
-    // Envío asíncrono vía POST al endpoint de Google Sheets/Drive
     document.getElementById('pesajeForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const submitBtn = document.getElementById('submitBtn');
         const loadingText = document.getElementById('loadingText');
         
-        // Bloquear UI durante la transferencia
         submitBtn.disabled = true;
         loadingText.style.display = "block";
 
-        // Estructura de carga útil limpia en JSON
         const payload = {
             fecha: document.getElementById('fecha').value,
             boleta: document.getElementById('boleta').value,
             p_bruto: document.getElementById('p_bruto').value,
             tara: document.getElementById('tara').value,
             p_neto: document.getElementById('p_neto').value,
-            fotos: listaFotosBase64 // Pasamos el array completo de imágenes procesadas
+            fotos: listaFotosBase64
         };
 
-        // Petición HTTP nativa (Fetch API) a la nube de Google
         fetch(WEB_APP_URL, {
             method: 'POST',
-            mode: 'no-cors', // Evita bloqueos por políticas CORS en entornos móviles locales
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -402,7 +391,6 @@
         })
         .then(() => {
             alert("¡Registro exitoso! Los datos se guardaron en la hoja y las fotos fueron ordenadas en Drive.");
-            // Resetear el formulario e interfaz de fotos
             document.getElementById('pesajeForm').reset();
             document.getElementById('fecha').valueAsDate = new Date();
             listaFotosBase64 = [];
@@ -418,6 +406,5 @@
         });
     });
 </script>
-
 </body>
 </html>
