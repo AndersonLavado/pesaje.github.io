@@ -24,16 +24,20 @@
             color: var(--celsa-dark);
             display: flex;
             justify-content: center;
+            align-items: flex-start; /* Cambiado de center a flex-start para que no se rompa al crecer */
+            min-height: 100vh;
+            padding: 20px 0; /* Un pequeño margen superior e inferior para estética cuando crezca mucho */
         }
 
         .mobile-container {
             width: 100%;
             max-width: 480px;
             background-color: #FFFFFF;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            border-radius: 12px; /* Opcional: Le da un toque más pulido si se desborda en pantallas grandes */
+            overflow: visible; /* Asegura que el contenedor estire su fondo blanco con los hijos */
         }
 
         header {
@@ -43,7 +47,7 @@
             align-items: center;
             justify-content: space-between;
             background: #FFFFFF;
-            border-bottom: 1px solid var(--Celsa-border);
+            border-bottom: 1px solid var(--celsa-border);
         }
 
         .logo-box {
@@ -75,7 +79,7 @@
 
         main {
             padding: 20px;
-            flex: 1;
+            flex: 1 0 auto;
         }
 
         h2 {
@@ -133,6 +137,68 @@
             flex: 1;
         }
 
+        /* Estilos del Frame Dinámico de Pesaje */
+        .pesaje-frame {
+            border: 1px solid var(--celsa-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #FAFAFC;
+            position: relative;
+        }
+
+        .pesaje-frame-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pesaje-frame-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .btn-remove-frame {
+            background: none;
+            border: none;
+            color: var(--celsa-red);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Botón Añadir Circular */
+        .add-frame-container {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+
+        .btn-add-frame {
+            background-color: #FFFFFF;
+            color: var(--celsa-red);
+            border: 2px solid var(--celsa-red);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .btn-add-frame:active {
+            background-color: var(--celsa-red);
+            color: #FFFFFF;
+            transform: scale(0.95);
+        }
+
         /* Sección de Múltiples Fotos */
         .photo-btn-trigger {
             background-color: var(--celsa-light-gray);
@@ -170,7 +236,7 @@
         .preview-container {
             position: relative;
             width: 100%;
-            padding-top: 100%; /* Cuadrado 1:1 */
+            padding-top: 100%;
             border-radius: 6px;
             overflow: hidden;
             border: 1px solid var(--celsa-border);
@@ -197,7 +263,6 @@
             justify-content: center;
         }
 
-        /* Botones de acción e indicadores de carga */
         .btn-submit {
             width: 100%;
             background-color: var(--celsa-red);
@@ -252,49 +317,31 @@
             </div>
 
             <div class="form-group">
-                 <label>Tipo de Documento</label>
-                      <div style="display: flex; gap: 20px; margin-top: 5px;">
-                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="radio" name="tipo_doc" value="boleta" checked onchange="conmutarDocumento()"
-                                       style="width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 15px; outline: none; background-color: #fff; cursor: pointer; display: grid; place-content: center;"> Boleta
-                            </label>
-                                <label style="display: flex; align-items: center; gap: 20px; cursor: pointer;">
-                                <input type="radio" name="tipo_doc" value="guia" onchange="conmutarDocumento()"
-                                       style="width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 15px; outline: none; background-color: #fff; cursor: pointer; display: grid; place-content: center;"> Guía
+                <label>Tipo de Documento</label>
+                <div style="display: flex; gap: 20px; margin-top: 5px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="tipo_doc" value="boleta" checked onchange="conmutarDocumento()"> Boleta
                     </label>
-                 </div>
-
-<div class="form-group">
-    <div class="input-wrapper">
-        <i id="icono-documento" class="fa-solid fa-ticket"></i>
-        <input type="text" id="numDoc" placeholder="Ej. 9778 / T005-9778" required>
-    </div>
-</div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="p_bruto">P. Bruto (kg)</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-weight-scale"></i>
-                        <input type="number" step="0.1" id="p_bruto" placeholder="0.0" oninput="calcularNeto()" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tara">Tara (kg)</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-box"></i>
-                        <input type="number" step="0.1" id="tara" placeholder="0.0" oninput="calcularNeto()" required>
-                    </div>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="tipo_doc" value="guia" onchange="conmutarDocumento()"> Guía
+                    </label>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="p_neto">P. Neto (kg)</label>
                 <div class="input-wrapper">
-                    <i class="fa-solid fa-calculator"></i>
-                    <input type="number" id="p_neto" placeholder="Cálculo automático" readonly style="background-color: #F2F2F7; font-weight: 600;">
+                    <i id="icono-documento" class="fa-solid fa-ticket"></i>
+                    <input type="text" id="numDoc" placeholder="Ej. 9778 / T005-9778" required>
                 </div>
+            </div>
+
+            <div id="pesajeFramesContainer">
+                </div>
+
+            <div class="add-frame-container">
+                <button type="button" class="btn-add-frame" onclick="agregarNuevoFrame()" title="Añadir pallet">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
             </div>
 
             <div class="form-group">
@@ -320,26 +367,99 @@
 </div>
 
 <script>
-    // URL generada al publicar tu Google Apps Script
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzaA-7tyuLonz3ZCtm59pzgj-c3jAguMwDAV2Fl7nKC0bkoKq4OiYolybgkgG9Y4C3KFQ/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqCvaZpXpCpBsi6-oeoDgaes4ZhqR0Sn3BU7bK9X0NSVHqz5BeQYWrNybGUewgcRxzLw/exec";
 
     document.getElementById('fecha').valueAsDate = new Date();
-    let listaFotosBase64 = []; // Array para guardar las múltiples imágenes en memoria
+    let listaFotosBase64 = []; 
+    let frameCounter = 0;
 
-  function conmutarDocumento() {
-    const tipo = document.querySelector('input[name="tipo_doc"]:checked').value;
-    const label = document.getElementById('label-documento');
-    const icono = document.getElementById('icono-documento');
-    const input = document.getElementById('documento');
+    // Generar el primer frame al iniciar la aplicación
+    window.addEventListener('DOMContentLoaded', () => {
+        agregarNuevoFrame();
+    });
+
+    function conmutarDocumento() {
+        const tipo = document.querySelector('input[name="tipo_doc"]:checked').value;
+        const icono = document.getElementById('icono-documento');
+        if(tipo === 'boleta') {
+            icono.className = "fa-solid fa-ticket";
+        } else {
+            icono.className = "fa-solid fa-file-invoice";
+        }
     }
-  function calcularNeto() {
-        const bruto = parseFloat(document.getElementById('p_bruto').value) || 0;
-        const tara = parseFloat(document.getElementById('tara').value) || 0;
+
+    // Añade de manera dinámica un nuevo frame de pesaje
+    function agregarNuevoFrame() {
+        frameCounter++;
+        const container = document.getElementById('pesajeFramesContainer');
+        
+        const frame = document.createElement('div');
+        frame.className = 'pesaje-frame';
+        frame.id = `frame_${frameCounter}`;
+        
+        // El botón para eliminar sólo aparece a partir del segundo frame
+        const deleteButton = frameCounter > 1 
+            ? `<button type="button" class="btn-remove-frame" onclick="eliminarFrame(${frameCounter})"><i class="fa-solid fa-trash"></i></button>` 
+            : '';
+
+        frame.innerHTML = `
+            <div class="pesaje-frame-header">
+                <span class="pesaje-frame-title">Pesaje #${frameCounter}</span>
+                ${deleteButton}
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>P. Bruto (kg)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-weight-scale"></i>
+                        <input type="number" step="0.1" class="p_bruto" placeholder="0.0" oninput="calcularNetoFrame(this)" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tara (kg)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-box"></i>
+                        <input type="number" step="0.1" class="tara" placeholder="0.0" oninput="calcularNetoFrame(this)" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>P. Neto (kg)</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calculator"></i>
+                    <input type="number" class="p_neto" placeholder="Cálculo automático" readonly style="background-color: #F2F2F7; font-weight: 600;">
+                </div>
+            </div>
+        `;
+        container.appendChild(frame);
+        renumerarFrames();
+    }
+
+    function eliminarFrame(id) {
+        const frame = document.getElementById(`frame_${id}`);
+        if(frame) {
+            frame.remove();
+            renumerarFrames();
+        }
+    }
+
+    // Mantiene los títulos secuenciales ordenados si se borra un frame intermedio
+    function renumerarFrames() {
+        const titles = document.querySelectorAll('.pesaje-frame-title');
+        titles.forEach((title, index) => {
+            title.textContent = `Pallet #${index + 1}`;
+        });
+    }
+
+    // Ejecuta el cálculo apuntando específicamente a los inputs hermanos del mismo bloque
+    function calcularNetoFrame(inputEl) {
+        const frame = inputEl.closest('.pesaje-frame');
+        const bruto = parseFloat(frame.querySelector('.p_bruto').value) || 0;
+        const tara = parseFloat(frame.querySelector('.tara').value) || 0;
         const neto = bruto - tara;
-        document.getElementById('p_neto').value = neto > 0 ? neto.toFixed(1) : 0;
+        frame.querySelector('.p_neto').value = neto > 0 ? neto.toFixed(1) : 0;
     }
 
-    // Procesa cada imagen capturada, la convierte a base64 y la añade a la galería visual
     function procesarFoto(input) {
         if (input.files && input.files[0]) {
             const archivo = input.files[0];
@@ -347,24 +467,20 @@
             
             lector.onload = function(e) {
                 const base64Data = e.target.result;
-                
-                // Guardar en el arreglo global
                 listaFotosBase64.push({
                     base64: base64Data,
                     filename: archivo.name
                 });
-                
-                // Renderizar miniatura en la interfaz móvil
                 renderizarGaleria();
             };
             lector.readAsDataURL(archivo);
-            input.value = ""; // Limpiar input para permitir capturar la misma foto consecutivamente
+            input.value = ""; 
         }
     }
 
     function renderizarGaleria() {
         const galeria = document.getElementById('gallery');
-        galeria.innerHTML = ""; // Limpiar vista previa anterior
+        galeria.innerHTML = ""; 
         
         listaFotosBase64.forEach((foto, indice) => {
             const contenedor = document.createElement('div');
@@ -378,8 +494,8 @@
             btnEliminar.innerHTML = "×";
             btnEliminar.type = "button";
             btnEliminar.onclick = function() {
-                listaFotosBase64.splice(indice, 1); // Quitar del arreglo
-                renderizarGaleria(); // Re-dibujar
+                listaFotosBase64.splice(indice, 1); 
+                renderizarGaleria(); 
             };
             
             contenedor.appendChild(img);
@@ -388,50 +504,56 @@
         });
     }
 
-    // Envío asíncrono vía POST al endpoint de Google Sheets/Drive
     document.getElementById('pesajeForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        //if(WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwQAzKnQSfqo2L6pGuGFbtIj8vgYhZSRfCrNYSpNH59LxhuSI8aIazxGxx9LQIRvX1P/exec") {
-            //alert("Error: Debes configurar primero la URL de tu Apps Script en el código.");
-            //return;
-        //}
-
         const submitBtn = document.getElementById('submitBtn');
         const loadingText = document.getElementById('loadingText');
         
-        // Bloquear UI durante la transferencia
         submitBtn.disabled = true;
         loadingText.style.display = "block";
 
-        // Estructura de carga útil limpia en JSON
         const tipoDoc = document.querySelector('input[name="tipo_doc"]:checked').value;
         const numDoc = document.getElementById('numDoc').value;
+
+        // Recopilar la información de cada uno de los frames creados
+        const listaPesajes = [];
+        const frames = document.querySelectorAll('.pesaje-frame');
+        frames.forEach(frame => {
+            listaPesajes.push({
+                p_bruto: frame.querySelector('.p_bruto').value,
+                tara: frame.querySelector('.tara').value,
+                p_neto: frame.querySelector('.p_neto').value
+            });
+        });
+
+        // Enviamos el objeto con la lista estructurada
         const payload = {
             fecha: document.getElementById('fecha').value,
-            tipo_documento: tipoDoc,  //se esta cambiando para que jale boleta o guia
-            numero_documento: numDoc, // para que jale el numero de boleta o guia
-          //boleta: document.getElementById('boleta').value,
-            p_bruto: document.getElementById('p_bruto').value,
-            tara: document.getElementById('tara').value,
-            p_neto: document.getElementById('p_neto').value,
-            fotos: listaFotosBase64 // Pasamos el array completo de imágenes procesadas
+            tipo_documento: tipoDoc,  
+            numero_documento: numDoc, 
+            pesajes: listaPesajes, 
+            fotos: listaFotosBase64 
         };
 
-        // Petición HTTP nativa (Fetch API) a la nube de Google
         fetch(WEB_APP_URL, {
             method: 'POST',
-            mode: 'no-cors', // Evita bloqueos por políticas CORS en entornos móviles locales
+            mode: 'no-cors', 
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload)
         })
         .then(() => {
-            alert("¡Registro exitoso! Los datos se guardaron en la hoja y las fotos fueron ordenadas en Drive.");
-            // Resetear el formulario e interfaz de fotos
+            alert("¡Registro exitoso! Todos los pesos se guardaron en la hoja y las fotos en Drive.");
             document.getElementById('pesajeForm').reset();
             document.getElementById('fecha').valueAsDate = new Date();
+            
+            // Reestablecer los frames dejando solo uno limpio
+            document.getElementById('pesajeFramesContainer').innerHTML = "";
+            frameCounter = 0;
+            agregarNuevoFrame();
+
             listaFotosBase64 = [];
             renderizarGaleria();
         })
@@ -445,6 +567,5 @@
         });
     });
 </script>
-
 </body>
 </html>
