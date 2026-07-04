@@ -444,21 +444,6 @@
                     <i class="fa-solid fa-briefcase"></i> Traslado de SCRAP (Cod. SP)
                 </a>
             </li>
-            <!--<li>
-                <a href="#" onclick="switchView('proyectos', 'Proyectos')">
-                    <i class="fa-solid fa-rocket"></i> Proyectos
-                </a>
-            </li>
-            <li>
-                <a href="#" onclick="switchView('servicios', 'Servicios')">
-                    <i class="fa-solid fa-earth-americas"></i> Servicios
-                </a>
-            </li>
-            <li>
-                <a href="#" onclick="switchView('contacto', 'Contacto')">
-                    <i class="fa-solid fa-envelope"></i> Contacto
-                </a>
-            </li>-->
         </ul>
     </nav>
 
@@ -496,7 +481,7 @@
                 <div id="pesajeFramesContainer"></div>
 
                 <div class="add-frame-container">
-                    <button type="button" class="btn-add-frame" onclick="agregarNuevoFrame()">
+                    <button type="button" class="btn-add-frame" onclick="LingotesApp.agregarNuevoFrame()">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
@@ -507,7 +492,7 @@
                         <i class="fa-solid fa-camera"></i>
                         <p>Capturar o añadir fotografía</p>
                     </div>
-                    <input type="file" id="cameraFile" accept="image/*" style="display: none;" onchange="procesarFoto(this)">
+                    <input type="file" id="cameraFile" accept="image/*" style="display: none;" onchange="LingotesApp.procesarFoto(this)">
                     <div class="preview-gallery" id="gallery"></div>
                 </div>
 
@@ -535,7 +520,7 @@
                 <div id="pesajeFramesContainerTrabajos"></div>
 
                 <div class="add-frame-container">
-                    <button type="button" class="btn-add-frame" onclick="agregarNuevoFrameTrabajos()" title="Añadir pallet">
+                    <button type="button" class="btn-add-frame" onclick="ScrapApp.agregarNuevoFrame()" title="Añadir pallet">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
@@ -549,51 +534,45 @@
                 </button>
             </form>
         </div>
-
-        <!--<div id="proyectos" class="app-section">
-            <h2>Sección de Proyectos</h2>
-            <p style="color: #666; font-size: 14px;">El contenido correspondiente a los proyectos se diseñará aquí.</p>
-        </div>
-
-        <div id="servicios" class="app-section">
-            <h2>Sección de Servicios</h2>
-            <p style="color: #666; font-size: 14px;">El contenido correspondiente a los servicios se diseñará aquí.</p>
-        </div>
-
-        <div id="contacto" class="app-section">
-            <h2>Contacto</h2>
-            <p style="color: #666; font-size: 14px;">El contenido correspondiente a contacto se diseñará aquí.</p>
-        </div>-->
     </main>
 </div>
 
 <script>
-(() => {
+// ============================================
+// FUNCIONES COMPARTIDAS DEL MENÚ
+// ============================================
+function toggleMenu() {
+    const menu = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('navOverlay');
+    menu.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function switchView(viewId, shortTitle) {
+    document.querySelectorAll('.app-section').forEach(section => {
+        section.classList.remove('active-view');
+    });
+    document.getElementById(viewId).classList.add('active-view');
+    document.getElementById('headerTitle').textContent = shortTitle;
+    toggleMenu();
+}
+</script>
+
+<script>
+// ============================================
+// APP 1: MÓDULO DE LINGOTES DE COBRE
+// ============================================
+const LingotesApp = (() => {
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqCvaZpXpCpBsi6-oeoDgaes4ZhqR0Sn3BU7bK9X0NSVHqz5BeQYWrNybGUewgcRxzLw/exec";
     
-    document.getElementById('fecha').valueAsDate = new Date();
     let listaFotosBase64 = [];
     let frameCounter = 0;
 
+    // Inicialización
     window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('fecha').valueAsDate = new Date();
         agregarNuevoFrame();
     });
-
-    function toggleMenu() {
-        const menu = document.getElementById('sidebarMenu');
-        const overlay = document.getElementById('navOverlay');
-        menu.classList.toggle('active');
-        overlay.classList.toggle('active');
-    }
-
-    function switchView(viewId, shortTitle) {
-        document.querySelectorAll('.app-section').forEach(section => {
-            section.classList.remove('active-view');
-        });
-        document.getElementById(viewId).classList.add('active-view');
-        document.getElementById('headerTitle').textContent = shortTitle;
-        toggleMenu();
-    }
 
     function conmutarDocumento() {
         const tipo = document.querySelector('input[name="tipo_doc"]:checked').value;
@@ -608,7 +587,10 @@
         frame.className = 'pesaje-frame';
         frame.id = `frame_${frameCounter}`;
         
-        const deleteButton = frameCounter > 1 ? `<button type="button" class="btn-remove-frame" onclick="eliminarFrame(${frameCounter})"><i class="fa-solid fa-trash-can"></i></button>` : '';
+        const deleteButton = frameCounter > 1 ? 
+            `<button type="button" class="btn-remove-frame" onclick="LingotesApp.eliminarFrame(${frameCounter})">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>` : '';
         
         frame.innerHTML = `
             <div class="pesaje-frame-header">
@@ -620,14 +602,14 @@
                     <label>P. Bruto (kg)</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-weight-scale"></i>
-                        <input type="number" step="0.1" class="p_bruto" placeholder="0.0" oninput="calcularNetoFrame(this)" required>
+                        <input type="number" step="0.1" class="p_bruto" placeholder="0.0" oninput="LingotesApp.calcularNetoFrame(this)" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Tara (kg)</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-box"></i>
-                        <input type="number" step="0.1" class="tara" placeholder="0.0" oninput="calcularNetoFrame(this)" required>
+                        <input type="number" step="0.1" class="tara" placeholder="0.0" oninput="LingotesApp.calcularNetoFrame(this)" required>
                     </div>
                 </div>
             </div>
@@ -688,7 +670,7 @@
             container.className = "preview-container";
             container.innerHTML = `
                 <img src="data:image/jpeg;base64,${base64}" alt="Vista previa">
-                <button type="button" class="remove-photo-btn" onclick="eliminarFoto(${index})">
+                <button type="button" class="remove-photo-btn" onclick="LingotesApp.eliminarFoto(${index})">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             `;
@@ -701,6 +683,7 @@
         renderizarGaleria();
     }
 
+    // Manejo del formulario
     document.getElementById('pesajeForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -711,7 +694,6 @@
         loadingText.style.display = "block";
     
         const listaPesajes = [];
-        // IMPORTANTE: Asegurar que apunte a los contenedores correctos de lingotes
         document.querySelectorAll('#pesajeFramesContainer .pesaje-frame').forEach(frame => {
             listaPesajes.push({
                 p_bruto: frame.querySelector('.p_bruto').value,
@@ -735,9 +717,7 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         })
-
         .then(res => res.json())
-        
         .then((resultado) => {
             if (resultado.status === "success") {
                 alert("¡Registro exitoso! Los datos y fotos se guardaron correctamente.");
@@ -762,26 +742,36 @@
         });
     });
 
-    // Registrar en el ámbito de window para uso de atributos HTML inline
-    window.toggleMenu = toggleMenu;
-    window.switchView = switchView;
-    window.conmutarDocumento = conmutarDocumento;
-    window.agregarNuevoFrame = agregarNuevoFrame;
-    window.eliminarFrame = eliminarFrame;
-    window.calcularNetoFrame = calcularNetoFrame;
-    window.procesarFoto = procesarFoto;
-    window.eliminarFoto = eliminarFoto;
+    // Exponer API pública
+    return {
+        agregarNuevoFrame,
+        eliminarFrame,
+        calcularNetoFrame,
+        procesarFoto,
+        eliminarFoto
+    };
 })();
+
+// Exponer función de conmutar documento al ámbito global
+window.conmutarDocumento = LingotesApp.conmutarDocumento || function() {
+    const tipo = document.querySelector('input[name="tipo_doc"]:checked').value;
+    const icono = document.getElementById('icono-documento');
+    icono.className = (tipo === 'boleta') ? "fa-solid fa-ticket" : "fa-solid fa-file-invoice";
+};
 </script>
 
 <script>
-(() => {
+// ============================================
+// APP 2: MÓDULO DE SCRAP
+// ============================================
+const ScrapApp = (() => {
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyW0hJI5d65Ex4gQkKM-GCNAZxNsMT7bkjVqk8Ck-VBAivuZvMmHfv-nDI1BAugk26C9g/exec";
     
-    document.getElementById('fechaTrabajos').valueAsDate = new Date();
     let frameCounter = 0;
 
+    // Inicialización
     window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('fechaTrabajos').valueAsDate = new Date();
         agregarNuevoFrame();
     });
 
@@ -793,8 +783,9 @@
         frame.id = `frame_trabajos_${frameCounter}`;
         
         const deleteButton = frameCounter > 1 ?
-            `<button type="button" class="btn-remove-frame" onclick="eliminarFrameTrabajos(${frameCounter})"><i class="fa-solid fa-trash"></i></button>` :
-            '';
+            `<button type="button" class="btn-remove-frame" onclick="ScrapApp.eliminarFrame(${frameCounter})">
+                <i class="fa-solid fa-trash"></i>
+            </button>` : '';
         
         frame.innerHTML = `
             <div class="pesaje-frame-header">
@@ -828,25 +819,25 @@
                 <label>Tipo de Scrap</label>
                 <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-top: 8px;">
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Primera" onchange="evaluarScrapTrabajos(${frameCounter})" required> Primera
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Primera" onchange="ScrapApp.evaluarScrap(${frameCounter})" required> Primera
                     </label>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Segunda" onchange="evaluarScrapTrabajos(${frameCounter})"> Segunda 
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Segunda" onchange="ScrapApp.evaluarScrap(${frameCounter})"> Segunda 
                     </label>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Tercera" onchange="evaluarScrapTrabajos(${frameCounter})"> Tercera 
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Tercera" onchange="ScrapApp.evaluarScrap(${frameCounter})"> Tercera 
                     </label>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Cobre" onchange="evaluarScrapTrabajos(${frameCounter})"> Cobre
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Cobre" onchange="ScrapApp.evaluarScrap(${frameCounter})"> Cobre
                     </label>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="PVC" onchange="evaluarScrapTrabajos(${frameCounter})"> PVC
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="PVC" onchange="ScrapApp.evaluarScrap(${frameCounter})"> PVC
                     </label>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="LSOH" onchange="evaluarScrapTrabajos(${frameCounter})"> LSOH
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="LSOH" onchange="ScrapApp.evaluarScrap(${frameCounter})"> LSOH
                     </label>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="radio" name="tipo_scrap_${frameCounter}" value="XLPE" onchange="evaluarScrapTrabajos(${frameCounter})"> XLPE
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="XLPE" onchange="ScrapApp.evaluarScrap(${frameCounter})"> XLPE
                     </label>
                 </div>
             </div>
@@ -913,14 +904,14 @@
                     <label>P. Bruto (kg)</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-weight-scale"></i>
-                        <input type="number" step="0.1" class="p_bruto" placeholder="0.0" oninput="calcularNetoFrameTrabajos(this)" required>
+                        <input type="number" step="0.1" class="p_bruto" placeholder="0.0" oninput="ScrapApp.calcularNetoFrame(this)" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Tara (kg)</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-box"></i>
-                        <input type="number" step="0.1" class="tara" placeholder="0.0" oninput="calcularNetoFrameTrabajos(this)" required>
+                        <input type="number" step="0.1" class="tara" placeholder="0.0" oninput="ScrapApp.calcularNetoFrame(this)" required>
                     </div>
                 </div>
             </div>
@@ -1088,11 +1079,13 @@
         });
     });
 
-    // Registrar los enlaces independientes al objeto global window con sufijos únicos
-    window.agregarNuevoFrameTrabajos = agregarNuevoFrame;
-    window.eliminarFrameTrabajos = eliminarFrame;
-    window.calcularNetoFrameTrabajos = calcularNetoFrame;
-    window.evaluarScrapTrabajos = evaluarScrap;
+    // Exponer API pública
+    return {
+        agregarNuevoFrame,
+        eliminarFrame,
+        calcularNetoFrame,
+        evaluarScrap
+    };
 })();
 </script>
 
