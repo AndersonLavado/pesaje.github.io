@@ -29,6 +29,19 @@
             min-height: 100vh;
             padding: 20px 0;
         }
+      
+        select {
+            width: 150px;
+            height: 45px;
+            margin-bottom: 10px;
+            margin-top: 0px;
+            font-family: cursive, sans-serif;
+            outline: 0;
+            color: var(--celsa-dark);
+            border: 1px solid crimson;
+            padding: 4px;
+            border-radius: 9px;
+        }
 
         .mobile-container {
             width: 100%;
@@ -83,7 +96,6 @@
             text-align: right;
         }
 
-        /* --- BOTÓN PARA ABRIR EL MENÚ (Ubicado en Header) --- */
         .menu-trigger-btn {
             background: none;
             border: none;
@@ -93,7 +105,6 @@
             padding: 5px 0 5px 10px;
         }
 
-        /* --- ESTRUCTURA DEL MENÚ LATERAL DERECHO --- */
         .nav-overlay {
             position: fixed;
             top: 0;
@@ -189,7 +200,6 @@
             opacity: 0.9;
         }
 
-        /* --- VISTAS / CONTENIDO VINCULADO --- */
         main {
             padding: 20px;
             flex: 1 0 auto;
@@ -197,12 +207,10 @@
 
         .app-section {
             display: none;
-            /* Ocultas por defecto */
         }
 
         .app-section.active-view {
             display: block;
-            /* Solo se muestra la vista activa */
         }
 
         h2 {
@@ -260,7 +268,6 @@
             flex: 1;
         }
 
-        /* Tarjetas de Pesaje Coherentes */
         .pesaje-frame {
             border: 1px solid var(--celsa-border);
             border-radius: 12px;
@@ -406,6 +413,21 @@
             font-weight: bold;
             font-size: 14px;
         }
+      
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            font-size: 14px;
+            cursor: pointer;
+        }  
     </style>
 </head>
 <body>
@@ -441,13 +463,19 @@
             </li>
             <li>
                 <a href="#" onclick="switchView('trabajos', 'Traslado de Scrap Famia')">
-                    <i class="fa-solid fa-briefcase"></i> Traslado de SCRAP (Cod. SP)
+                    <i class="fa-solid fa-basket-shopping"></i> Traslado de SCRAP (Cod. SP)
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="switchView('recepcion-carrete', 'Recepcion de Carretes')">
+                    <i class="fa-solid fa-life-ring"></i> Recepcion de carretes
                 </a>
             </li>
         </ul>
     </nav>
 
     <main>
+        <!-- 1. MODULO LINGOTES DE COBRE -->
         <div id="entrega-lingotes" class="app-section active-view">
             <h2>Nuevo Registro</h2>
             <form id="pesajeForm">
@@ -506,6 +534,7 @@
             </form>
         </div>
 
+        <!-- 2. MODULO TRASLADO DE SCRAP -->
         <div id="trabajos" class="app-section">
             <h2>Nuevo Registro Scrap</h2>
             <form id="pesajeFormTrabajos">
@@ -530,6 +559,81 @@
                 </div>
 
                 <button type="submit" class="btn-submit" id="submitBtnTrabajos">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Registrar en Drive
+                </button>
+            </form>
+        </div>
+      
+        <!-- 3. MODULO RECEPCION DE CARRETES -->
+        <div id="recepcion-carrete" class="app-section">
+            <h2>Nuevo Registro Carretes</h2>
+            <form id="pesajeFormRecepcion">
+                <div class="form-group">
+                    <label for="fechaRecepcion">Fecha</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="date" id="fechaRecepcion" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Proveedor</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" class="Proveedor" id="proveedor" placeholder="Corporacion ....">
+                    </div>
+                </div>
+              
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nº Boleta</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-ticket"></i>
+                            <input type="text" class="Boleta" id="boleta" placeholder="Ej. 0001">
+                        </div>
+                    </div>
+
+                    <div class="form-group">  
+                        <label>Nº Guía</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-file-invoice"></i>
+                            <input type="text" class="Guia" id="guia" placeholder="Ej. EG07-0001">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pesajeFramesContainerRecepcion"></div>
+
+                <div class="add-frame-container">
+                    <button type="button" class="btn-add-frame" onclick="CarretesApp.agregarNuevoFrame()">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>Evidencias Fotográficas (Múltiples)</label>
+                    <div class="photo-btn-trigger" onclick="document.getElementById('cameraFileCarretes').click();">
+                        <i class="fa-solid fa-camera"></i>
+                        <p>Capturar o añadir fotografía</p>
+                    </div>
+                    <input type="file" id="cameraFileCarretes" accept="image/*" style="display: none;" onchange="CarretesApp.procesarFoto(this)" multiple>
+                    
+                    <div class="preview-gallery" id="galleryCarretes"></div>
+                </div>
+              
+                <div class="form-group">
+                    <label>Responsable de verificación</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" class="Responsable" id="responsable" placeholder="Juan ...">
+                    </div>
+                </div>
+
+                <div class="loading-overlay" id="loadingTextCarretes">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Subiendo datos y fotos a Google Drive...
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtnCarretes">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Registrar en Drive
                 </button>
             </form>
@@ -568,9 +672,9 @@ const LingotesApp = (() => {
     let listaFotosBase64 = [];
     let frameCounter = 0;
 
-    // Inicialización
     window.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('fecha').valueAsDate = new Date();
+        const fechaEl = document.getElementById('fecha');
+        if(fechaEl) fechaEl.valueAsDate = new Date();
         agregarNuevoFrame();
     });
 
@@ -683,7 +787,6 @@ const LingotesApp = (() => {
         renderizarGaleria();
     }
 
-    // Manejo del formulario
     document.getElementById('pesajeForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -742,22 +845,17 @@ const LingotesApp = (() => {
         });
     });
 
-    // Exponer API pública
     return {
         agregarNuevoFrame,
         eliminarFrame,
         calcularNetoFrame,
         procesarFoto,
-        eliminarFoto
+        eliminarFoto,
+        conmutarDocumento
     };
 })();
 
-// Exponer función de conmutar documento al ámbito global
-window.conmutarDocumento = LingotesApp.conmutarDocumento || function() {
-    const tipo = document.querySelector('input[name="tipo_doc"]:checked').value;
-    const icono = document.getElementById('icono-documento');
-    icono.className = (tipo === 'boleta') ? "fa-solid fa-ticket" : "fa-solid fa-file-invoice";
-};
+window.conmutarDocumento = LingotesApp.conmutarDocumento;
 </script>
 
 <script>
@@ -769,9 +867,9 @@ const ScrapApp = (() => {
     
     let frameCounter = 0;
 
-    // Inicialización
     window.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('fechaTrabajos').valueAsDate = new Date();
+        const fechaEl = document.getElementById('fechaTrabajos');
+        if(fechaEl) fechaEl.valueAsDate = new Date();
         agregarNuevoFrame();
     });
 
@@ -810,7 +908,7 @@ const ScrapApp = (() => {
                     <label>Código SP</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-id-card"></i>
-                        <input type="text" class="cod_sp" placeholder="Ej. SP-000${frameCounter}">
+                        <input type="text" class="cod_sp" placeholder="Ej. 000${frameCounter}">
                     </div>
                 </div>
             </div>
@@ -881,7 +979,7 @@ const ScrapApp = (() => {
                     <label>Siguiente Proceso</label>
                     <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="radio" name="tipo_proceso_${frameCounter}" value="Venta"> Venta
+                            <input type="radio" name="tipo_proceso_${frameCounter}" value="Venta" required> Venta
                         </label>
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                             <input type="radio" name="tipo_proceso_${frameCounter}" value="Segregación"> Segregación
@@ -1032,7 +1130,7 @@ const ScrapApp = (() => {
 
             listaPesajes.push({
                 origen_scrap: origenScrap,
-                codigo_sp: codSp,
+                codigo_sp: 'SP-'+ codSp,
                 tipo_scrap: tipoScrap,
                 tipo_proceso: tipoProceso,
                 condicion_scrapPlastico: scrapPlastico, 
@@ -1051,9 +1149,7 @@ const ScrapApp = (() => {
 
         fetch(WEB_APP_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8'
-            },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1079,7 +1175,6 @@ const ScrapApp = (() => {
         });
     });
 
-    // Exponer API pública
     return {
         agregarNuevoFrame,
         eliminarFrame,
@@ -1088,6 +1183,236 @@ const ScrapApp = (() => {
     };
 })();
 </script>
+
+<script>
+// ============================================
+// APP 3: MÓDULO DE RECEPCION DE CARRETES
+// ============================================
+const CarretesApp = (() => {
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxugwcExqifre4loI903WX58C0oIsYKzqlD63C9OlrPbu5JFyrr74YVkTVI2f4LDwLH/exec";
+    
+    let listaFotosBase64 = [];
+    let frameCounter = 0;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const fechaEl = document.getElementById('fechaRecepcion');
+        if(fechaEl) fechaEl.valueAsDate = new Date();
+        agregarNuevoFrame();
+    });
+
+    function agregarNuevoFrame() {
+        frameCounter++;
+        const container = document.getElementById('pesajeFramesContainerRecepcion');
+        const frame = document.createElement('div');
+        frame.className = 'pesaje-frame';
+        frame.id = `frame_carrete_${frameCounter}`;
+        
+        const deleteButton = frameCounter > 1 
+            ? `<button type="button" class="btn-remove-frame" onclick="CarretesApp.eliminarFrame(${frameCounter})"><i class="fa-solid fa-trash-can"></i></button>` 
+            : '';
+        
+        frame.innerHTML = `
+            <div class="pesaje-frame-header">
+                <span class="pesaje-frame-title">CARRETE #${frameCounter}</span>
+                ${deleteButton}
+            </div>
+            
+            <div class="form-row">
+                <div style="display: flex; gap: 35px; flex-wrap: wrap;">
+                    <div class="form-group">
+                        <label>Tipo de carrete</label>
+                        <div style="display: flex; gap: 5px; margin-top: 0px;" class="radio-group">
+                            <label>
+                                <input type="radio" name="tipo_carrete_${frameCounter}" value="Madera" required> Madera
+                            </label>
+                            <label>
+                                <input type="radio" name="tipo_carrete_${frameCounter}" value="Metal"> Metal
+                            </label>
+                            <label>
+                                <input type="radio" name="tipo_carrete_${frameCounter}" value="Fenolico"> Fenolico
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label>Estado de Carrete</label>
+                        <div style="display: flex; gap: 5px; margin-top: 0px;" class="radio-group">
+                            <label>
+                                <input type="radio" name="Estado_carrete_${frameCounter}" value="Bueno" required> Bueno
+                            </label>
+                            <label>
+                                <input type="radio" name="Estado_carrete_${frameCounter}" value="Por Reparar"> Por Reparar
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="medidas_${frameCounter}">Medida de carrete</label>
+                    <select name="Medidas" id="medidas_${frameCounter}">
+                        <option value="">Seleccione</option>
+                        <option value="0.4">40</option>
+                        <option value="0.5">50</option>
+                        <option value="0.6">60</option>
+                        <option value="0.7">70</option>
+                        <option value="0.8">80</option>
+                        <option value="0.9">90</option>
+                        <option value="1.0">100</option>
+                        <option value="1.1">110</option>
+                        <option value="1.2">120</option>
+                        <option value="1.3">130</option>
+                        <option value="1.4">140</option>
+                        <option value="1.5">150</option>
+                        <option value="1.6">160</option>
+                        <option value="1.7">170</option>
+                        <option value="1.8">180</option>
+                        <option value="1.9">190</option>
+                        <option value="2.0">200</option>
+                        <option value="2.1">210</option>
+                        <option value="2.2">220</option>
+                        <option value="2.3">230</option>
+                        <option value="2.4">240</option>
+                        <option value="2.5">250</option>
+                    </select>
+                </div>
+            
+                <div class="form-group">
+                    <label for="cantidad_${frameCounter}">Cantidad</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-life-ring"></i>
+                        <input type="number" id="cantidad_${frameCounter}" placeholder="1" min="1" required>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(frame);
+        renumerarFrames();
+    }
+
+    function eliminarFrame(id) {
+        const frame = document.getElementById(`frame_carrete_${id}`);
+        if(frame) {
+            frame.remove();
+            renumerarFrames();
+        }
+    }
+
+    function renumerarFrames() {
+        const titles = document.querySelectorAll('#pesajeFramesContainerRecepcion .pesaje-frame-title');
+        titles.forEach((title, index) => {
+            title.textContent = `CARRETE #${index + 1}`;
+        });
+    }
+
+    function procesarFoto(input) {
+        if (input.files) {
+            for (let i = 0; i < input.files.length; i++) {
+                const archivo = input.files[i];
+                const lector = new FileReader();
+                lector.onload = function(e) {
+                    listaFotosBase64.push({
+                        base64: e.target.result,
+                        filename: archivo.name
+                    });
+                    renderizarGaleria();
+                };
+                lector.readAsDataURL(archivo);
+            }
+            input.value = ""; 
+        }
+    }
+
+    function renderizarGaleria() {
+        const galeria = document.getElementById('galleryCarretes');
+        if(!galeria) return;
+        galeria.innerHTML = ""; 
+        listaFotosBase64.forEach((foto, indice) => {
+            const contenedor = document.createElement('div');
+            contenedor.className = "preview-container";
+            contenedor.innerHTML = `
+                <img src="${foto.base64}">
+                <button type="button" class="remove-photo-btn" onclick="CarretesApp.eliminarFoto(${indice})">×</button>
+            `;
+            galeria.appendChild(contenedor);
+        });
+    }
+
+    function eliminarFoto(index) {
+        listaFotosBase64.splice(index, 1);
+        renderizarGaleria();
+    }
+
+    document.getElementById('pesajeFormRecepcion').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtnCarretes');
+        const loadingText = document.getElementById('loadingTextCarretes');
+        
+        submitBtn.disabled = true;
+        loadingText.style.display = "block";
+
+        const listaPesajes = [];
+        document.querySelectorAll('#pesajeFramesContainerRecepcion .pesaje-frame').forEach(frame => {
+            const frameId = frame.id.replace('frame_carrete_', '');
+            
+            const tipoCarrete = frame.querySelector(`input[name="tipo_carrete_${frameId}"]:checked`);
+            const estadoCarrete = frame.querySelector(`input[name="Estado_carrete_${frameId}"]:checked`);
+            const medidaSelect = frame.querySelector(`#medidas_${frameId}`);
+            const cantidadInput = frame.querySelector(`#cantidad_${frameId}`);
+            
+            listaPesajes.push({
+                T_carrete: tipoCarrete ? tipoCarrete.value : '',
+                E_carrete: estadoCarrete ? estadoCarrete.value : '',
+                M_Carrete: medidaSelect ? medidaSelect.value : '',
+                cantidad: cantidadInput ? cantidadInput.value : ''
+            });
+        });
+
+        const payload = {
+            fecha: document.getElementById('fechaRecepcion').value,
+            proveedor: document.getElementById('proveedor').value,  
+            n_boleta: document.getElementById('boleta').value,
+            n_guia: document.getElementById('guia').value,
+            pesajes: listaPesajes, 
+            fotos: listaFotosBase64,
+            responsable: document.getElementById('responsable').value
+        };
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then((data) => {
+            alert("¡Registro de carrete exitoso!");
+            document.getElementById('pesajeFormRecepcion').reset();
+            document.getElementById('fechaRecepcion').valueAsDate = new Date();
+            document.getElementById('pesajeFramesContainerRecepcion').innerHTML = "";
+            frameCounter = 0;
+            agregarNuevoFrame();
+            listaFotosBase64 = [];
+            renderizarGaleria();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Hubo un problema al enviar los datos.");
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            loadingText.style.display = "none";
+        });
+    });
+
+    return {
+        agregarNuevoFrame,
+        eliminarFrame,
+        procesarFoto,
+        eliminarFoto
+    };
+})();
+</script> 
 
 </body>
 </html>
