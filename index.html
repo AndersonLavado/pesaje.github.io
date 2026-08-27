@@ -35,7 +35,7 @@
             height: 45px;
             margin-bottom: 10px;
             margin-top: 0px;
-            font-family: cursive, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             outline: 0;
             color: var(--celsa-dark);
             border: 1px solid crimson;
@@ -385,6 +385,26 @@
             justify-content: center;
         }
 
+        .photo-name-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 9px;
+            padding: 2px 4px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .photo-name-label:hover {
+            background: rgba(227, 6, 19, 0.8);
+        }
+
         .btn-submit {
             width: 100%;
             background-color: var(--celsa-red);
@@ -427,7 +447,309 @@
             font-weight: normal;
             font-size: 14px;
             cursor: pointer;
-        }  
+        }
+
+        /* ============================================ */
+        /* MODAL PARA EDITAR NOMBRE DE IMAGEN CON ZOOM Y NAVEGACIÓN */
+        /* ============================================ */
+        .modal-edit-nombre {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-edit-nombre.active {
+            display: flex;
+        }
+
+        .modal-edit-nombre-content {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-height: 95vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(30px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-edit-nombre-content h3 {
+            color: var(--celsa-red);
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--celsa-red);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .modal-edit-nombre-content h3 .counter {
+            font-size: 13px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        /* === NAVEGACIÓN ENTRE IMÁGENES === */
+        .modal-edit-nombre-content .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .modal-edit-nombre-content .nav-controls button {
+            background: none;
+            border: 1px solid var(--celsa-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #333;
+        }
+
+        .modal-edit-nombre-content .nav-controls button:hover:not(:disabled) {
+            background: var(--celsa-red);
+            color: white;
+            border-color: var(--celsa-red);
+        }
+
+        .modal-edit-nombre-content .nav-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .modal-edit-nombre-content .nav-controls .nav-indicator {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .modal-edit-nombre-content .nav-controls .nav-indicator .nombre-actual {
+            display: block;
+            font-weight: 400;
+            font-size: 11px;
+            color: #888;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* === CONTENEDOR DE IMAGEN CON ZOOM === */
+        .modal-edit-nombre-content .preview-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--celsa-border);
+            margin-bottom: 15px;
+            background: #0a0a0a;
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .modal-edit-nombre-content .preview-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .modal-edit-nombre-content .preview-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: none;
+            pointer-events: none;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        /* === CONTROLES DE ZOOM === */
+        .zoom-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .zoom-controls button {
+            background: var(--celsa-light-gray);
+            border: 1px solid var(--celsa-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #333;
+        }
+
+        .zoom-controls button:hover {
+            background: var(--celsa-red);
+            color: white;
+            border-color: var(--celsa-red);
+        }
+
+        .zoom-controls button:active {
+            transform: scale(0.9);
+        }
+
+        .zoom-controls .zoom-level {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            min-width: 50px;
+            justify-content: center;
+        }
+
+        /* === RESTO DEL MODAL === */
+        .modal-edit-nombre-content .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .modal-edit-nombre-content .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f5f5f7;
+            border-radius: 8px;
+            padding: 0 12px;
+            border: 1px solid var(--celsa-border);
+            margin-bottom: 5px;
+        }
+
+        .modal-edit-nombre-content .input-group:focus-within {
+            border-color: var(--celsa-red);
+        }
+
+        .modal-edit-nombre-content .input-group i {
+            color: #8E8E93;
+            font-size: 16px;
+        }
+
+        .modal-edit-nombre-content .input-group input {
+            width: 100%;
+            padding: 12px 8px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .modal-edit-nombre-content .extension-text {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+            padding: 4px 0;
+            white-space: nowrap;
+        }
+
+        .modal-edit-nombre-content .help-text {
+            font-size: 11px;
+            color: #888;
+            margin: 5px 0 15px 0;
+        }
+
+        .modal-edit-nombre-content .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-edit-nombre-content .btn-group button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-edit-nombre-content .btn-group .btn-cancelar {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-edit-nombre-content .btn-group .btn-cancelar:hover {
+            background: #d0d0d0;
+        }
+
+        .modal-edit-nombre-content .btn-group .btn-guardar {
+            background: var(--celsa-red);
+            color: white;
+        }
+
+        .modal-edit-nombre-content .btn-group .btn-guardar:hover {
+            background: #c00510;
+        }
+
+        .modal-edit-nombre-content .btn-group .btn-guardar:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .extension-badge {
+            display: inline-block;
+            background: var(--celsa-light-gray);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+            margin-left: 4px;
+        }
+
+        .zoom-status {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .zoom-status i {
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
@@ -520,7 +842,7 @@
                         <i class="fa-solid fa-camera"></i>
                         <p>Capturar o añadir fotografía</p>
                     </div>
-                    <input type="file" id="cameraFile" accept="image/*" style="display: none;" onchange="LingotesApp.procesarFoto(this)">
+                    <input type="file" id="cameraFile" accept="image/*" style="display: none;" onchange="LingotesApp.procesarFoto(this)" multiple>
                     <div class="preview-gallery" id="gallery"></div>
                 </div>
 
@@ -641,6 +963,73 @@
     </main>
 </div>
 
+<!-- ============================================ -->
+<!-- MODAL PARA EDITAR NOMBRE DE IMAGEN CON ZOOM Y NAVEGACIÓN -->
+<!-- ============================================ -->
+<div class="modal-edit-nombre" id="modalEditNombre">
+    <div class="modal-edit-nombre-content">
+        <h3>
+            <span><i class="fa-solid fa-pen"></i> Editar nombre</span>
+            <span class="counter" id="modalCounter">1 / 1</span>
+        </h3>
+        
+        <!-- Controles de navegación -->
+        <div class="nav-controls">
+            <button onclick="navImage(-1)" id="navPrevBtn" title="Anterior">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="nav-indicator" id="navIndicator">
+                <span id="navNombreActual" class="nombre-actual">imagen.jpg</span>
+            </span>
+            <button onclick="navImage(1)" id="navNextBtn" title="Siguiente">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <!-- Contenedor con zoom -->
+        <div class="preview-wrapper" id="previewWrapper">
+            <img id="modalPreviewImage" src="" alt="Vista previa">
+        </div>
+        
+        <!-- Controles de zoom -->
+        <div class="zoom-controls">
+            <button onclick="zoomOut()" title="Alejar">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+            <button onclick="zoomIn()" title="Acercar">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            <button onclick="resetZoom()" title="Restablecer zoom">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+            <span class="zoom-level" id="zoomLevel">100%</span>
+        </div>
+        
+        <div class="zoom-status">
+            <i class="fa-solid fa-mouse-pointer"></i> Arrastra para mover | Rueda para zoom
+        </div>
+        
+        <label class="label" style="margin-top: 12px;">Nombre del archivo</label>
+        <div class="input-group">
+            <i class="fa-solid fa-file-image"></i>
+            <input type="text" id="modalNombreInput" placeholder="Ingresa el nombre" onkeydown="if(event.key==='Enter') guardarNombreModal()">
+            <span class="extension-text" id="modalExtensionText">.jpg</span>
+        </div>
+        <div class="help-text">
+            <i class="fa-solid fa-info-circle"></i> La extensión del archivo se mantendrá automáticamente
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn-cancelar" onclick="cerrarModalEditar()">
+                <i class="fa-solid fa-times"></i> Cancelar
+            </button>
+            <button class="btn-guardar" onclick="guardarNombreModal()">
+                <i class="fa-solid fa-check"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 // ============================================
 // FUNCIONES COMPARTIDAS DEL MENÚ
@@ -660,6 +1049,338 @@ function switchView(viewId, shortTitle) {
     document.getElementById('headerTitle').textContent = shortTitle;
     toggleMenu();
 }
+
+// ============================================
+// VARIABLES GLOBALES DEL MODAL
+// ============================================
+let modalFiles = [];
+let modalCurrentIndex = 0;
+let modalCallback = null;
+let modalFinalizarCallback = null;
+
+// Variables de zoom
+let currentZoom = 1;
+let minZoom = 0.5;
+let maxZoom = 5;
+let zoomStep = 0.2;
+
+// Variables de arrastre
+let isDragging = false;
+let startX, startY;
+let translateX = 0;
+let translateY = 0;
+
+// ============================================
+// FUNCIONES DE ZOOM Y ARRASTRE
+// ============================================
+function updateTransform() {
+    const img = document.getElementById('modalPreviewImage');
+    if (!img) return;
+    img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+    document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+}
+
+function zoomIn() {
+    if (currentZoom < maxZoom) {
+        currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+        updateTransform();
+    }
+}
+
+function zoomOut() {
+    if (currentZoom > minZoom) {
+        currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+        if (currentZoom === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+        updateTransform();
+    }
+}
+
+function resetZoom() {
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+}
+
+function getDragLimits() {
+    const wrapper = document.getElementById('previewWrapper');
+    if (!wrapper) return { maxX: 0, maxY: 0 };
+    
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const containerWidth = wrapperRect.width;
+    const containerHeight = wrapperRect.height;
+    const imgWidth = containerWidth * currentZoom;
+    const imgHeight = containerHeight * currentZoom;
+    
+    const maxX = Math.max(0, (imgWidth - containerWidth) / 2);
+    const maxY = Math.max(0, (imgHeight - containerHeight) / 2);
+    
+    return { maxX, maxY };
+}
+
+function clampDrag(x, y) {
+    if (currentZoom <= 1) return { x: 0, y: 0 };
+    const limits = getDragLimits();
+    return {
+        x: Math.max(-limits.maxX, Math.min(limits.maxX, x)),
+        y: Math.max(-limits.maxY, Math.min(limits.maxY, y))
+    };
+}
+
+// ============================================
+// EVENTOS DE ARRASTRE
+// ============================================
+function initDragEvents() {
+    const wrapper = document.getElementById('previewWrapper');
+    if (!wrapper) return;
+    
+    wrapper.addEventListener('mousedown', (e) => {
+        if (currentZoom <= 1) return;
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        wrapper.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        let newX = e.clientX - startX;
+        let newY = e.clientY - startY;
+        const clamped = clampDrag(newX, newY);
+        translateX = clamped.x;
+        translateY = clamped.y;
+        updateTransform();
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            const wrapper = document.getElementById('previewWrapper');
+            if (wrapper) wrapper.style.cursor = 'grab';
+        }
+    });
+}
+
+function initTouchEvents() {
+    const wrapper = document.getElementById('previewWrapper');
+    if (!wrapper) return;
+    
+    let lastTouchX = 0, lastTouchY = 0, isTouching = false;
+    
+    wrapper.addEventListener('touchstart', (e) => {
+        if (currentZoom <= 1) return;
+        const touch = e.touches[0];
+        isTouching = true;
+        lastTouchX = touch.clientX - translateX;
+        lastTouchY = touch.clientY - translateY;
+        e.preventDefault();
+    }, { passive: false });
+    
+    wrapper.addEventListener('touchmove', (e) => {
+        if (!isTouching || currentZoom <= 1) return;
+        const touch = e.touches[0];
+        let newX = touch.clientX - lastTouchX;
+        let newY = touch.clientY - lastTouchY;
+        const clamped = clampDrag(newX, newY);
+        translateX = clamped.x;
+        translateY = clamped.y;
+        updateTransform();
+        e.preventDefault();
+    }, { passive: false });
+    
+    wrapper.addEventListener('touchend', () => { isTouching = false; });
+}
+
+function initWheelZoom() {
+    const wrapper = document.getElementById('previewWrapper');
+    if (!wrapper) return;
+    
+    wrapper.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (e.deltaY < 0) zoomIn();
+        else zoomOut();
+    }, { passive: false });
+}
+
+// ============================================
+// FUNCIONES DE NAVEGACIÓN ENTRE IMÁGENES
+// ============================================
+function navImage(direction) {
+    const newIndex = modalCurrentIndex + direction;
+    if (newIndex < 0 || newIndex >= modalFiles.length) return;
+    
+    modalCurrentIndex = newIndex;
+    mostrarImagenActual();
+}
+
+function mostrarImagenActual() {
+    const fileData = modalFiles[modalCurrentIndex];
+    if (!fileData) return;
+    
+    const preview = document.getElementById('modalPreviewImage');
+    preview.src = fileData.base64;
+    
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+    
+    const extension = fileData.nombreOriginal.split('.').pop() || 'jpg';
+    const nombreSinExtension = fileData.nombreOriginal.substring(0, fileData.nombreOriginal.lastIndexOf('.')) || fileData.nombreOriginal;
+    
+    document.getElementById('modalNombreInput').value = nombreSinExtension;
+    document.getElementById('modalExtensionText').textContent = '.' + extension;
+    
+    document.getElementById('modalCounter').textContent = (modalCurrentIndex + 1) + ' / ' + modalFiles.length;
+    document.getElementById('navNombreActual').textContent = fileData.nombreOriginal;
+    
+    document.getElementById('navPrevBtn').disabled = (modalCurrentIndex === 0);
+    document.getElementById('navNextBtn').disabled = (modalCurrentIndex === modalFiles.length - 1);
+}
+
+// ============================================
+// FUNCIONES DEL MODAL
+// ============================================
+function abrirModalEditarConNavegacion(files, callback) {
+    if (!files || files.length === 0) return;
+    
+    modalFiles = files;
+    modalCurrentIndex = 0;
+    modalFinalizarCallback = callback;
+    
+    mostrarImagenActual();
+    document.getElementById('modalEditNombre').classList.add('active');
+    
+    setTimeout(() => {
+        initDragEvents();
+        initTouchEvents();
+        initWheelZoom();
+    }, 100);
+    
+    setTimeout(() => {
+        document.getElementById('modalNombreInput').focus();
+        document.getElementById('modalNombreInput').select();
+    }, 300);
+}
+
+function cerrarModalEditar() {
+    document.getElementById('modalEditNombre').classList.remove('active');
+}
+
+function guardarNombreModal() {
+    const input = document.getElementById('modalNombreInput');
+    const extensionText = document.getElementById('modalExtensionText');
+    const extension = extensionText.textContent.replace('.', '');
+    
+    let nuevoNombre = input.value.trim();
+    
+    if (!nuevoNombre) {
+        alert('⚠️ Por favor ingresa un nombre válido.');
+        return;
+    }
+    
+    const nombreFinal = nuevoNombre + '.' + extension;
+    
+    if (modalFiles[modalCurrentIndex]) {
+        modalFiles[modalCurrentIndex].nombreFinal = nombreFinal;
+    }
+    
+    // Si hay más imágenes, avanzar
+    if (modalCurrentIndex < modalFiles.length - 1) {
+        navImage(1);
+        setTimeout(() => {
+            document.getElementById('modalNombreInput').focus();
+            document.getElementById('modalNombreInput').select();
+        }, 200);
+    } else {
+        // Última imagen - cerrar modal y ejecutar callback
+        const resultados = modalFiles.map(f => f.nombreFinal || f.nombreOriginal);
+        cerrarModalEditar();
+        
+        if (modalFinalizarCallback) {
+            modalFinalizarCallback(resultados);
+        }
+        // Resetear
+        modalFiles = [];
+        modalCurrentIndex = 0;
+        modalFinalizarCallback = null;
+    }
+}
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (document.getElementById('modalEditNombre').classList.contains('active')) {
+            cerrarModalEditar();
+            modalFiles = [];
+            modalCurrentIndex = 0;
+            modalFinalizarCallback = null;
+        }
+    }
+});
+
+// ============================================
+// FUNCIÓN PARA PROCESAR MÚLTIPLES FOTOS CON MODAL
+// ============================================
+function procesarFotosConModal(input, callback) {
+    if (!input.files || input.files.length === 0) return;
+    
+    const files = Array.from(input.files);
+    let archivosLeidos = [];
+    let procesados = 0;
+    
+    if (files.length === 0) {
+        alert('⚠️ No se seleccionaron archivos.');
+        return;
+    }
+    
+    files.forEach((file) => {
+        if (!file.type.startsWith('image/')) {
+            alert('❌ El archivo "' + file.name + '" no es una imagen válida. Se omitirá.');
+            procesados++;
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64String = e.target.result;
+            archivosLeidos.push({
+                base64: base64String,
+                nombreOriginal: file.name,
+                nombreFinal: file.name
+            });
+            procesados++;
+            
+            if (procesados === files.length) {
+                if (archivosLeidos.length === 0) {
+                    alert('⚠️ No se seleccionaron imágenes válidas.');
+                    return;
+                }
+                // Abrir modal con los archivos leídos
+                abrirModalEditarConNavegacion(archivosLeidos, function(resultados) {
+                    // ✅ Aquí se ejecuta después de cerrar el modal
+                    if (callback) {
+                        const datosFinales = archivosLeidos.map((img, index) => ({
+                            base64: img.base64,
+                            nombreOriginal: img.nombreOriginal,
+                            nombreFinal: resultados[index] || img.nombreOriginal
+                        }));
+                        callback(datosFinales);
+                    }
+                });
+            }
+        };
+        reader.onerror = function() {
+            alert('❌ Error al leer el archivo "' + file.name + '". Se omitirá.');
+            procesados++;
+        };
+        reader.readAsDataURL(file);
+    });
+}
 </script>
 
 <script>
@@ -667,7 +1388,7 @@ function switchView(viewId, shortTitle) {
 // APP 1: MÓDULO DE LINGOTES DE COBRE
 // ============================================
 const LingotesApp = (() => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqCvaZpXpCpBsi6-oeoDgaes4ZhqR0Sn3BU7bK9X0NSVHqz5BeQYWrNybGUewgcRxzLw/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzTndSSKLPNqBeS-X62A5qPF_ww_vaJrUrMtLshvSbAF5NSvGCeoYfDPXmI1OPJHle6rQ/exec";
     
     let listaFotosBase64 = [];
     let frameCounter = 0;
@@ -752,33 +1473,75 @@ const LingotesApp = (() => {
         frame.querySelector('.p_neto').value = neto > 0 ? neto.toFixed(1) : 0;
     }
 
+    // ✅ PROCESAR FOTOS - CORREGIDO
     function procesarFoto(input) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64String = e.target.result.split(',')[1];
-                listaFotosBase64.push(base64String);
+        if (input.files && input.files.length > 0) {
+            // Guardar referencia a los archivos para procesarlos después
+            const archivos = Array.from(input.files);
+            
+            procesarFotosConModal(input, function(datosFinales) {
+                console.log('📸 Callback ejecutado con', datosFinales.length, 'imágenes');
+                
+                // ✅ Agregar todas las imágenes a la lista
+                for (let i = 0; i < datosFinales.length; i++) {
+                    const img = datosFinales[i];
+                    let base64Puro = img.base64;
+                    if (base64Puro.includes(';base64,')) {
+                        base64Puro = base64Puro.split(',')[1];
+                    }
+                    
+                    listaFotosBase64.push({
+                        base64: base64Puro,
+                        filename: img.nombreFinal
+                    });
+                }
+                
+                // ✅ Renderizar la galería
                 renderizarGaleria();
-            };
-            reader.readAsDataURL(file);
-            input.value = ""; 
+                console.log('✅ Galería renderizada con', listaFotosBase64.length, 'imágenes');
+            });
+            input.value = "";
         }
     }
 
     function renderizarGaleria() {
         const gallery = document.getElementById('gallery');
         gallery.innerHTML = "";
-        listaFotosBase64.forEach((base64, index) => {
+        if (listaFotosBase64.length === 0) {
+            gallery.innerHTML = '<p style="color: #999; font-size: 13px; text-align: center; padding: 10px;">No hay imágenes seleccionadas</p>';
+            return;
+        }
+        listaFotosBase64.forEach((foto, index) => {
             const container = document.createElement('div');
             container.className = "preview-container";
             container.innerHTML = `
-                <img src="data:image/jpeg;base64,${base64}" alt="Vista previa">
+                <img src="data:image/jpeg;base64,${foto.base64}" alt="Vista previa">
                 <button type="button" class="remove-photo-btn" onclick="LingotesApp.eliminarFoto(${index})">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
+                <div class="photo-name-label" onclick="LingotesApp.editarNombreFoto(${index})" title="Haz clic para editar el nombre">
+                    ✏️ ${foto.filename || 'imagen.jpg'}
+                </div>
             `;
             gallery.appendChild(container);
+        });
+    }
+
+    function editarNombreFoto(index) {
+        const foto = listaFotosBase64[index];
+        if (!foto) return;
+        
+        const fileData = {
+            base64: 'data:image/jpeg;base64,' + foto.base64,
+            nombreOriginal: foto.filename,
+            nombreFinal: foto.filename
+        };
+        
+        abrirModalEditarConNavegacion([fileData], function(resultados) {
+            if (resultados && resultados.length > 0) {
+                foto.filename = resultados[0];
+                renderizarGaleria();
+            }
         });
     }
 
@@ -805,14 +1568,17 @@ const LingotesApp = (() => {
             });
         });
 
-        const fotosPuras = listaFotosBase64.map(f => typeof f === 'object' ? f.base64.split(',')[1] || f.base64 : f);
+        const fotosData = listaFotosBase64.map(f => ({
+            filename: f.filename || 'imagen.jpg',
+            base64: f.base64
+        }));
 
         const payload = {
             fecha: document.getElementById('fecha').value,
             tipo_documento: document.querySelector('input[name="tipo_doc"]:checked').value,  
             numero_documento: document.getElementById('numDoc').value, 
             pesajes: listaPesajes, 
-            fotos: fotosPuras 
+            fotos: fotosData 
         };
 
         fetch(WEB_APP_URL, {
@@ -851,6 +1617,7 @@ const LingotesApp = (() => {
         calcularNetoFrame,
         procesarFoto,
         eliminarFoto,
+        editarNombreFoto,
         conmutarDocumento
     };
 })();
@@ -863,19 +1630,140 @@ window.conmutarDocumento = LingotesApp.conmutarDocumento;
 // APP 2: MÓDULO DE SCRAP
 // ============================================
 const ScrapApp = (() => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyW0hJI5d65Ex4gQkKM-GCNAZxNsMT7bkjVqk8Ck-VBAivuZvMmHfv-nDI1BAugk26C9g/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0Qr2o7T4u93kBUJ45PKkp9TNBhceVDCZ4hcegPBKkJolLgnOwLpxchKysjKybnS2y-g/exec";
     
     let frameCounter = 0;
 
-    window.addEventListener('DOMContentLoaded', () => {
+    function init() {
         const fechaEl = document.getElementById('fechaTrabajos');
         if(fechaEl) fechaEl.valueAsDate = new Date();
         agregarNuevoFrame();
-    });
+        
+        const form = document.getElementById('pesajeFormTrabajos');
+        if (form) {
+            form.addEventListener('submit', handleSubmit);
+        } else {
+            console.error('❌ Formulario "pesajeFormTrabajos" no encontrado');
+        }
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        console.log('✅ Formulario de Scrap enviado');
+        
+        const submitBtn = document.getElementById('submitBtnTrabajos');
+        const loadingText = document.getElementById('loadingTextTrabajos');
+        
+        if (!submitBtn || !loadingText) {
+            console.error('❌ Elementos del formulario no encontrados');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        loadingText.style.display = "block";
+        loadingText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando datos...';
+
+        const listaPesajes = [];
+        const frames = document.querySelectorAll('#pesajeFramesContainerTrabajos .pesaje-frame');
+        
+        if (frames.length === 0) {
+            alert('⚠️ Debes agregar al menos un registro de pesaje.');
+            submitBtn.disabled = false;
+            loadingText.style.display = "none";
+            return;
+        }
+        
+        frames.forEach(frame => {
+            const frameId = frame.id.replace('frame_trabajos_', '');
+            
+            const origenEl = frame.querySelector(`input[name="origen_scrap_${frameId}"]:checked`);
+            const origenScrap = origenEl ? origenEl.value : "";
+            
+            const codSp = frame.querySelector('.cod_sp')?.value || '';
+            
+            const tipoEl = frame.querySelector(`input[name="tipo_scrap_${frameId}"]:checked`);
+            const tipoScrap = tipoEl ? tipoEl.value : "";
+            
+            const scrapPlasticoEl = frame.querySelector(`input[name="scrap_${frameId}"]:checked`);
+            const scrapPlastico = scrapPlasticoEl ? scrapPlasticoEl.value : "";
+            
+            const scrapCUEl = frame.querySelector(`input[name="scrapCu_${frameId}"]:checked`);
+            const scrapCU = scrapCUEl ? scrapCUEl.value : "";
+            
+            const tipoProcesoEl = frame.querySelector(`input[name="tipo_proceso_${frameId}"]:checked`);
+            const tipoProceso = tipoProcesoEl ? tipoProcesoEl.value : "";
+
+            const otroDesEl = frame.querySelector(`input[name="scrapotrosdes_${frameId}"]:checked`);
+            const otrosdesnudos = otroDesEl ? otroDesEl.value : "";
+            
+            const otroForEl = frame.querySelector(`input[name="scrapotrosfor_${frameId}"]:checked`);
+            const otrosforrados = otroForEl ? otroForEl.value : "";
+            
+            const pBruto = frame.querySelector('.p_bruto')?.value || '0';
+            const tara = frame.querySelector('.tara')?.value || '0';
+            const pNeto = frame.querySelector('.p_neto')?.value || '0';
+            const observacion = frame.querySelector('.observacion')?.value || '';
+
+            listaPesajes.push({
+                origen_scrap: origenScrap,
+                codigo_sp: 'SP-' + codSp,
+                tipo_scrap: tipoScrap,
+                tipo_proceso: tipoProceso,
+                condicion_scrapPlastico: scrapPlastico, 
+                condicion_scrapCu: scrapCU,
+                otros_desnudo: otrosdesnudos,
+                otros_forrado: otrosforrados,
+                p_bruto: pBruto,
+                tara: tara,
+                p_neto: pNeto,
+                observacion: observacion
+            });
+        });
+
+        const payload = {
+            fecha: document.getElementById('fechaTrabajos').value,
+            pesajes: listaPesajes
+        };
+
+        console.log('📤 Enviando payload:', payload);
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then((resultado) => {
+            if(resultado.status === "success") {
+                alert("¡Registro exitoso! Los datos se guardaron correctamente.");
+                const form = document.getElementById('pesajeFormTrabajos');
+                if (form) form.reset();
+                document.getElementById('fechaTrabajos').valueAsDate = new Date();
+                document.getElementById('pesajeFramesContainerTrabajos').innerHTML = "";
+                frameCounter = 0;
+                agregarNuevoFrame();
+            } else {
+                alert("❌ Error en el script: " + (resultado.message || 'Error desconocido'));
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error:', error);
+            alert("❌ Hubo un problema al enviar los datos. Revisa la consola para más detalles.");
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            loadingText.style.display = "none";
+        });
+    }
 
     function agregarNuevoFrame() {
         frameCounter++;
         const container = document.getElementById('pesajeFramesContainerTrabajos');
+        if (!container) {
+            console.error('❌ Contenedor no encontrado');
+            return;
+        }
+        
         const frame = document.createElement('div');
         frame.className = 'pesaje-frame';
         frame.id = `frame_trabajos_${frameCounter}`;
@@ -937,6 +1825,12 @@ const ScrapApp = (() => {
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                         <input type="radio" name="tipo_scrap_${frameCounter}" value="XLPE" onchange="ScrapApp.evaluarScrap(${frameCounter})"> XLPE
                     </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Otros Desnudos" onchange="ScrapApp.evaluarScrap(${frameCounter})"> Otros Desnudos
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="tipo_scrap_${frameCounter}" value="Otros Forrado" onchange="ScrapApp.evaluarScrap(${frameCounter})"> Otros Forrado
+                    </label>
                 </div>
             </div>
             
@@ -952,6 +1846,46 @@ const ScrapApp = (() => {
                         </label>
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                             <input type="radio" name="scrap_${frameCounter}" value="Contaminado"> Contaminado 
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="contenedor_scrapotrosdes_${frameCounter}" class="form-row" style="display: none;">
+                <div class="form-group">
+                    <label>Lista de Otros Desnudos</label>
+                    <div style="display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosdes_${frameCounter}" value="AAC DESNUDO"> AAC Desnudo
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosdes_${frameCounter}" value="AAAC DESNUDO"> AAAC Desnudo 
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosdes_${frameCounter}" value="ACERO COMPONENTE DESNUDO"> Acero Componente Desnudo 
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosdes_${frameCounter}" value="ALAMBRE GALVANIZADO"> Alambre Galvanizado 
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="contenedor_scrapotrosfor_${frameCounter}" class="form-row" style="display: none;">
+                <div class="form-group">
+                    <label>Lista de Otros Forrado</label>
+                    <div style="display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosfor_${frameCounter}" value="AAC FORRADO BT"> AAC Forrado BT
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosfor_${frameCounter}" value="AAC FORRADO MT"> AAC Forrado MT 
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosfor_${frameCounter}" value="AAAC FORRADO"> AAAC Forrado 
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="scrapotrosfor_${frameCounter}" value="ACERO FORRADO"> Acero Forrado 
                         </label>
                     </div>
                 </div>
@@ -979,7 +1913,7 @@ const ScrapApp = (() => {
                     <label>Siguiente Proceso</label>
                     <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="radio" name="tipo_proceso_${frameCounter}" value="Venta" required> Venta
+                            <input type="radio" name="tipo_proceso_${frameCounter}" value="Venta"> Venta
                         </label>
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                             <input type="radio" name="tipo_proceso_${frameCounter}" value="Segregación"> Segregación
@@ -1052,10 +1986,12 @@ const ScrapApp = (() => {
 
     function calcularNetoFrame(inputEl) {
         const frame = inputEl.closest('.pesaje-frame');
-        const bruto = parseFloat(frame.querySelector('.p_bruto').value) || 0;
-        const tara = parseFloat(frame.querySelector('.tara').value) || 0;
+        if (!frame) return;
+        const bruto = parseFloat(frame.querySelector('.p_bruto')?.value) || 0;
+        const tara = parseFloat(frame.querySelector('.tara')?.value) || 0;
         const neto = bruto - tara;
-        frame.querySelector('.p_neto').value = neto > 0 ? neto.toFixed(1) : 0;
+        const netoInput = frame.querySelector('.p_neto');
+        if (netoInput) netoInput.value = neto > 0 ? neto.toFixed(1) : 0;
     }
 
     function evaluarScrap(frameId) {
@@ -1063,123 +1999,67 @@ const ScrapApp = (() => {
         const divPlastico = document.getElementById(`contenedor_scrap_${frameId}`);
         const divCu = document.getElementById(`contenedor_scrapCu_${frameId}`);
         const divProceso = document.getElementById(`contenedor_proceso_${frameId}`);
-        
-        if (seleccionado && divPlastico && divProceso && divCu) {
+        const divotrosfor = document.getElementById(`contenedor_scrapotrosfor_${frameId}`);
+        const divotrosdes = document.getElementById(`contenedor_scrapotrosdes_${frameId}`);
+      
+        if (seleccionado && divPlastico && divProceso && divCu && divotrosfor && divotrosdes) {
             const valor = seleccionado.value;
+            
+            divPlastico.style.display = "none";
+            divCu.style.display = "none";
+            divotrosfor.style.display = "none";
+            divotrosdes.style.display = "none";
+            
             if (valor === "PVC" || valor === "LSOH" || valor === "XLPE") {
                 divPlastico.style.display = "flex";
                 divProceso.style.display = "flex";
-                divCu.style.display = "none";
                 desmarcarRadio(divCu);
+                desmarcarRadio(divotrosfor);
+                desmarcarRadio(divotrosdes);
             } else if (valor === "Cobre") {
                 divCu.style.display = "flex";
                 divProceso.style.display = "flex";
-                divPlastico.style.display = "none";
                 desmarcarRadio(divPlastico);
-            } else {
-                divPlastico.style.display = "none";
-                divCu.style.display = "none";
+                desmarcarRadio(divotrosfor);
+                desmarcarRadio(divotrosdes);
+            } else if (valor === "Primera" || valor === "Segunda" || valor === "Tercera") {
+                divProceso.style.display = "flex";
                 desmarcarRadio(divPlastico);
                 desmarcarRadio(divCu);
-                desmarcarRadio(divProceso);
+                desmarcarRadio(divotrosfor);
+                desmarcarRadio(divotrosdes);
+            } else if (valor === "Otros Forrado") {
+                divProceso.style.display = "none";
+                divotrosfor.style.display = "flex";
+                desmarcarRadio(divPlastico);
+                desmarcarRadio(divCu);
+                desmarcarRadio(divotrosdes);
+            } else if (valor === "Otros Desnudos") {
+                divProceso.style.display = "none";
+                divotrosdes.style.display = "flex";
+                desmarcarRadio(divPlastico);
+                desmarcarRadio(divCu);
+                desmarcarRadio(divotrosfor);
             }
         }
     }
 
     function desmarcarRadio(contenedor) {
+        if (!contenedor) return;
         const radios = contenedor.querySelectorAll('input[type="radio"]');
         radios.forEach(radio => radio.checked = false);
     }
 
-    document.getElementById('pesajeFormTrabajos').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const submitBtn = document.getElementById('submitBtnTrabajos');
-        const loadingText = document.getElementById('loadingTextTrabajos');
-        
-        submitBtn.disabled = true;
-        loadingText.style.display = "block";
-
-        const listaPesajes = [];
-        const frames = document.querySelectorAll('#pesajeFramesContainerTrabajos .pesaje-frame');
-        
-        frames.forEach(frame => {
-            const frameId = frame.id.replace('frame_trabajos_', '');
-            
-            const origenEl = frame.querySelector(`input[name="origen_scrap_${frameId}"]:checked`);
-            const origenScrap = origenEl ? origenEl.value : "";
-            
-            const codSp = frame.querySelector('.cod_sp').value;
-            
-            const tipoEl = frame.querySelector(`input[name="tipo_scrap_${frameId}"]:checked`);
-            const tipoScrap = tipoEl ? tipoEl.value : "";
-            
-            const scrapPlasticoEl = frame.querySelector(`input[name="scrap_${frameId}"]:checked`);
-            const scrapPlastico = scrapPlasticoEl ? scrapPlasticoEl.value : "";
-            
-            const scrapCUEl = frame.querySelector(`input[name="scrapCu_${frameId}"]:checked`);
-            const scrapCU = scrapCUEl ? scrapCUEl.value : "";
-            
-            const tipoProcesoEl = frame.querySelector(`input[name="tipo_proceso_${frameId}"]:checked`);
-            const tipoProceso = tipoProcesoEl ? tipoProcesoEl.value : "";
-            
-            const pBruto = frame.querySelector('.p_bruto').value;
-            const tara = frame.querySelector('.tara').value;
-            const pNeto = frame.querySelector('.p_neto').value;
-            const observacion = frame.querySelector('.observacion').value;
-
-            listaPesajes.push({
-                origen_scrap: origenScrap,
-                codigo_sp: 'SP-'+ codSp,
-                tipo_scrap: tipoScrap,
-                tipo_proceso: tipoProceso,
-                condicion_scrapPlastico: scrapPlastico, 
-                condicion_scrapCu: scrapCU,
-                p_bruto: pBruto,
-                tara: tara,
-                p_neto: pNeto,
-                observacion: observacion
-            });
-        });
-
-        const payload = {
-            fecha: document.getElementById('fechaTrabajos').value,
-            pesajes: listaPesajes
-        };
-
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then((resultado) => {
-            if(resultado.status === "success") {
-                alert("¡Registro exitoso! Todos los pesos se guardaron correctamente.");
-                document.getElementById('pesajeFormTrabajos').reset();
-                document.getElementById('fechaTrabajos').valueAsDate = new Date();
-                document.getElementById('pesajeFramesContainerTrabajos').innerHTML = "";
-                frameCounter = 0;
-                agregarNuevoFrame();
-            } else {
-                alert("Error en el script: " + resultado.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Hubo un problema al procesar el envío.");
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            loadingText.style.display = "none";
-        });
+    window.addEventListener('DOMContentLoaded', () => {
+        ScrapApp.init();
     });
 
     return {
-        agregarNuevoFrame,
-        eliminarFrame,
-        calcularNetoFrame,
-        evaluarScrap
+        init: init,
+        agregarNuevoFrame: agregarNuevoFrame,
+        eliminarFrame: eliminarFrame,
+        calcularNetoFrame: calcularNetoFrame,
+        evaluarScrap: evaluarScrap
     };
 })();
 </script>
@@ -1189,7 +2069,7 @@ const ScrapApp = (() => {
 // APP 3: MÓDULO DE RECEPCION DE CARRETES
 // ============================================
 const CarretesApp = (() => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxugwcExqifre4loI903WX58C0oIsYKzqlD63C9OlrPbu5JFyrr74YVkTVI2f4LDwLH/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzHIiR8HipbEoSz_IzdYyseAONxeLxP1e-XUmSpFS84MztD4EDpNltmPU4JrT8YNkfH/exec";
     
     let listaFotosBase64 = [];
     let frameCounter = 0;
@@ -1218,7 +2098,7 @@ const CarretesApp = (() => {
             </div>
             
             <div class="form-row">
-                <div style="display: flex; gap: 35px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <div class="form-group">
                         <label>Tipo de carrete</label>
                         <div style="display: flex; gap: 5px; margin-top: 0px;" class="radio-group">
@@ -1256,6 +2136,7 @@ const CarretesApp = (() => {
                         <option value="0.4">40</option>
                         <option value="0.5">50</option>
                         <option value="0.6">60</option>
+                        <option value="0.65">65</option>
                         <option value="0.7">70</option>
                         <option value="0.8">80</option>
                         <option value="0.9">90</option>
@@ -1275,6 +2156,9 @@ const CarretesApp = (() => {
                         <option value="2.3">230</option>
                         <option value="2.4">240</option>
                         <option value="2.5">250</option>
+                        <option value="2.6">260</option>
+                        <option value="2.7">270</option>
+                        <option value="2.8">280</option>
                     </select>
                 </div>
             
@@ -1306,21 +2190,25 @@ const CarretesApp = (() => {
         });
     }
 
+    // ✅ PROCESAR FOTOS - CORREGIDO
     function procesarFoto(input) {
-        if (input.files) {
-            for (let i = 0; i < input.files.length; i++) {
-                const archivo = input.files[i];
-                const lector = new FileReader();
-                lector.onload = function(e) {
+        if (input.files && input.files.length > 0) {
+            procesarFotosConModal(input, function(datosFinales) {
+                console.log('📸 Callback Carretes ejecutado con', datosFinales.length, 'imágenes');
+                
+                for (let i = 0; i < datosFinales.length; i++) {
+                    const img = datosFinales[i];
+                    
                     listaFotosBase64.push({
-                        base64: e.target.result,
-                        filename: archivo.name
+                        base64: img.base64,
+                        filename: img.nombreFinal
                     });
-                    renderizarGaleria();
-                };
-                lector.readAsDataURL(archivo);
-            }
-            input.value = ""; 
+                }
+                
+                renderizarGaleria();
+                console.log('✅ Galería Carretes renderizada con', listaFotosBase64.length, 'imágenes');
+            });
+            input.value = "";
         }
     }
 
@@ -1328,14 +2216,41 @@ const CarretesApp = (() => {
         const galeria = document.getElementById('galleryCarretes');
         if(!galeria) return;
         galeria.innerHTML = ""; 
+        if (listaFotosBase64.length === 0) {
+            galeria.innerHTML = '<p style="color: #999; font-size: 13px; text-align: center; padding: 10px;">No hay imágenes seleccionadas</p>';
+            return;
+        }
         listaFotosBase64.forEach((foto, indice) => {
             const contenedor = document.createElement('div');
             contenedor.className = "preview-container";
             contenedor.innerHTML = `
                 <img src="${foto.base64}">
-                <button type="button" class="remove-photo-btn" onclick="CarretesApp.eliminarFoto(${indice})">×</button>
+                <button type="button" class="remove-photo-btn" onclick="CarretesApp.eliminarFoto(${indice})">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="photo-name-label" onclick="CarretesApp.editarNombreFoto(${indice})" title="Haz clic para editar el nombre">
+                    ✏️ ${foto.filename || 'imagen.jpg'}
+                </div>
             `;
             galeria.appendChild(contenedor);
+        });
+    }
+
+    function editarNombreFoto(index) {
+        const foto = listaFotosBase64[index];
+        if (!foto) return;
+        
+        const fileData = {
+            base64: foto.base64,
+            nombreOriginal: foto.filename,
+            nombreFinal: foto.filename
+        };
+        
+        abrirModalEditarConNavegacion([fileData], function(resultados) {
+            if (resultados && resultados.length > 0) {
+                foto.filename = resultados[0];
+                renderizarGaleria();
+            }
         });
     }
 
@@ -1409,7 +2324,8 @@ const CarretesApp = (() => {
         agregarNuevoFrame,
         eliminarFrame,
         procesarFoto,
-        eliminarFoto
+        eliminarFoto,
+        editarNombreFoto
     };
 })();
 </script> 
